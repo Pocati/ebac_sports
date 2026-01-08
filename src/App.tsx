@@ -1,32 +1,26 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Header from './components/Header'
 import Produtos from './containers/Produtos'
+import { useDispatch, useSelector } from 'react-redux'
+import type { RootState, AppDispatch } from './store'
+import { addToCart } from './store/carrinhoSlice'
+import { useGetProdutosQuery } from './store/produtosAPI'
+import { Produto } from './types'
 
 import { GlobalStyle } from './styles'
 
-export type Produto = {
-  id: number
-  nome: string
-  preco: number
-  imagem: string
-}
-
 function App() {
-  const [produtos, setProdutos] = useState<Produto[]>([])
-  const [carrinho, setCarrinho] = useState<Produto[]>([])
-  const [favoritos, setFavoritos] = useState<Produto[]>([])
+  const { data: produtos = [], isLoading } = useGetProdutosQuery()
+  const dispatch = useDispatch<AppDispatch>()
+  const carrinho = useSelector((state: RootState) => state.cart.items)
 
-  useEffect(() => {
-    fetch('https://api-ebac.vercel.app/api/ebac_sports')
-      .then((res) => res.json())
-      .then((res) => setProdutos(res))
-  }, [])
+  const [favoritos, setFavoritos] = useState<Produto[]>([])
 
   function adicionarAoCarrinho(produto: Produto) {
     if (carrinho.find((p) => p.id === produto.id)) {
       alert('Item já adicionado')
     } else {
-      setCarrinho([...carrinho, produto])
+      dispatch(addToCart(produto))
     }
   }
 
@@ -44,12 +38,16 @@ function App() {
       <GlobalStyle />
       <div className="container">
         <Header favoritos={favoritos} itensNoCarrinho={carrinho} />
-        <Produtos
-          produtos={produtos}
-          favoritos={favoritos}
-          favoritar={favoritar}
-          adicionarAoCarrinho={adicionarAoCarrinho}
-        />
+        {isLoading ? (
+          <p>Carregando...</p>
+        ) : (
+          <Produtos
+            produtos={produtos}
+            favoritos={favoritos}
+            favoritar={favoritar}
+            adicionarAoCarrinho={adicionarAoCarrinho}
+          />
+        )}
       </div>
     </>
   )

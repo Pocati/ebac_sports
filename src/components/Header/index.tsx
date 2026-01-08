@@ -1,14 +1,13 @@
 import * as S from './styles'
+import { Produto } from '../../types'
 
-import { Produto } from '../../App'
-
-import cesta from '../../assets/cesta.png'
-import { paraReal } from '../Produto'
-
-type Props = {
+interface Props {
   itensNoCarrinho: Produto[]
   favoritos: Produto[]
 }
+
+import cesta from '../../assets/cesta.png'
+import { paraReal } from '../Produto'
 
 const Header = ({ itensNoCarrinho, favoritos }: Props) => {
   const valorTotal = itensNoCarrinho.reduce((acc, item) => {

@@ -1,9 +1,9 @@
-import { Produto as ProdutoType } from '../App'
+import { Produto as ProdutoType } from '../types'
 import Produto from '../components/Produto'
 
 import * as S from './styles'
 
-type Props = {
+interface Props {
   produtos: ProdutoType[]
   favoritos: ProdutoType[]
   adicionarAoCarrinho: (produto: ProdutoType) => void
